@@ -24,7 +24,7 @@
 .cost-field .unit-switch button{height:21px;min-width:26px;padding:0 5px;font-size:11px;border-radius:99px;line-height:21px}
 .cost-field .unit-switch button[aria-pressed="true"]{box-shadow:0 1px 4px #00000014}
 .cost-field input{height:48px;width:100%;display:block;min-width:0}
-.rate-fields .unit-pill{min-width:68px}
+.rate-fields .unit-pill{min-width:68px}.rate-fields.amount-mode .rate-field{grid-column:1/-1}
 .mode-head .unit-switch{border-radius:99px;padding:3px}.mode-head .unit-switch button{border-radius:99px}
 @media(max-width:450px){.cost-fields{column-gap:10px}.cost-field .cost-field-head label{font-size:12px}.cost-field .unit-pill{font-size:10px;min-width:67px;padding:0 5px}.cost-field .unit-switch{min-width:67px}.cost-field .unit-switch button{min-width:23px;padding:0 3px}}
 </style><meta content="noindex,nofollow,noarchive" name="robots"/><meta content="no-referrer" name="referrer"/></head><body><noscript><div class="nojs">L’anteprima File di iPhone può disattivare i calcoli. Per usare le barrette, apri il calcolatore tramite un link web in Safari.</div></noscript>
@@ -53,7 +53,7 @@ function rateControl(i,key,label,value,unit){
  var id='rate-'+i+'-'+key;
  return '<div class="field cost-field rate-field"><div class="cost-field-head"><label for="'+id+'">'+label+'</label><span class="unit-pill" aria-hidden="true">'+unit+'</span></div><input id="'+id+'" data-field="'+key+'" type="text" inputmode="decimal" autocomplete="off" aria-label="'+label+' ('+(unit==='%'?'%':'€/mese')+')" value="'+String(value).replace('.',',')+'"></div>';
 }
-function aliquote(c,i){return '<div class="cost-fields rate-fields">'+(c.commissionMode==='eur'?rateControl(i,'commissionTotal','Commissioni totali',c.commissionTotal,'€ / mese'):cards.map(function(k){return rateControl(i,k,labels[k],c[k],'%')}).join(''))+'</div>'}
+function aliquote(c,i){return '<div class="cost-fields rate-fields'+(c.commissionMode==='eur'?' amount-mode':'')+'">'+(c.commissionMode==='eur'?rateControl(i,'commissionTotal',i===0?'Commissione attuale':'Commissione offerta',c.commissionTotal,'€ / mese'):cards.map(function(k){return rateControl(i,k,labels[k],c[k],'%')}).join(''))+'</div>'}
 function costControl(i,key,label,value,c){
  var id='cost-'+i+'-'+key;
  var unit=key==='acquiring'?switcher('acquiring',c.acquiringUnit):'<span class="unit-pill" aria-hidden="true">'+(key==='perTx'?'€':'€ / mese')+'</span>';
@@ -68,7 +68,7 @@ function buildPage(i){
  cards.forEach(function(k){html+='<div><div class="slider-top"><span>'+labels[k]+'</span><span class="slider-val" data-share-label="'+k+'">'+shared[k]+'%</span></div><input class="slider" data-share="'+k+'" type="range" min="0" max="100" step="1" value="'+shared[k]+'" aria-label="Percentuale '+labels[k]+'"></div>'});
  html+='</div><div class="inline-kpi"><span class="k-label" data-output="weightedLabel">Tasso medio ponderato</span><strong class="k-number" data-output="weighted">—</strong></div></div>';
 
- html+='<div class="card"><div class="mode-head"><h2 class="heading">Aliquote</h2>'+switcher('commission',c.commissionMode)+'</div><div data-commission-inputs>'+aliquote(c,i)+'</div></div>';
+ html+='<div class="card"><div class="mode-head"><h2 class="heading">'+(c.commissionMode==='eur'?'Commissione':'Aliquote')+'</h2>'+switcher('commission',c.commissionMode)+'</div><div data-commission-inputs>'+aliquote(c,i)+'</div></div>';
  html+='<div class="card"><h2 class="heading">Altro</h2><div class="cost-fields">'+costControl(i,'fee','Canone',c.fee,c)+costControl(i,'stamp','Bollo',c.stamp,c)+costControl(i,'acquiring','Acquiring',c.acquiring,c)+costControl(i,'perTx','Per transazione',c.perTx,c)+'</div>';
  html+='<div class="inline-kpi"><span class="k-label">Incidenza costi</span><strong class="k-number" data-output="extra">—</strong></div></div>';
  html+='<div class="nav">'+(i?'<button type="button" class="secondary" data-goto="0">Indietro</button>':'<span></span>')+'<button type="button" data-goto="'+(i+1)+'">'+(i?'Confronto':'La mia offerta')+' →</button></div></div>';
